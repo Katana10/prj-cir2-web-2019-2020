@@ -30,19 +30,20 @@
   // }
 
  
-  // function dbRequestPhoto($db, $id){
-  //   try{
-  //     $request = 'SELECT id, title, large AS src FROM photos WHERE id=:id';
-  //     $statement = $db->prepare($request);
-  //     $statement->bindParam(':id', $id, PDO::PARAM_INT);
-  //     $statement->execute();
-  //     $result = $statement->fetch(PDO::FETCH_ASSOC);
-  //   }catch (PDOException $exception){
-  //     error_log('Request error: '.$exception->getMessage());
-  //     return false;
-  //   }
-  //   return $result;
-  // }
+  function dbRequestUser($db, $mail){
+    try{
+      $request = 'SELECT club FROM club WHERE mail=:mail';
+      $statement = $db->prepare($request);
+      $statement->bindParam(':mail', $mail, PDO::PARAM_STR);
+      $statement->execute();
+      $result = $statement->fetch(PDO::FETCH_ASSOC);
+    }catch (PDOException $exception){
+      error_log('Request error: '.$exception->getMessage());
+      return false;
+    }
+    return $result;
+  }
+
   function dbRequestRace($db){
     try
     {
@@ -115,14 +116,20 @@
     return $result;
   }
 
-  function dbRequestOnList($db, $id, $club){
+  function dbRequestOnList($db, $id, $club, $cluborga){
     try
     {
-      $request ='SELECT cy.nom,cy.prenom, cy.club FROM cycliste cy, club cl, participe p
-      WHERE EXISTS (SELECT * FROM participe WHERE p.mail = cy.mail AND cl.club =:club AND p.id=:id);'
+      if ($club == $cluborga){
+        $request ='SELECT cy.nom,cy.prenom, cy.club FROM cycliste cy, club cl, participe p, course co 
+        WHERE p.mail = cy.mail AND cy.club =:cluborga AND p.id=:id';
+      }else{
+        $request ='SELECT cy.nom,cy.prenom, cy.club, co.libelle FROM cycliste cy, club cl, participe p, course co 
+        WHERE p.mail = cy.mail AND cy.club !=:cluborga AND p.id=:id';
+      }
       $statement = $db->prepare($request);
       $statement->bindParam(':id', $id, PDO::PARAM_INT);
-      $statement->bindParam(':club', $club, PDO::PARAM_INT);
+      $statement->bindParam(':club', $club, PDO::PARAM_STR);
+      $statement->bindParam(':cluborga', $cluborga, PDO::PARAM_STR);
       $statement->execute();
       $result = $statement->fetchAll(PDO::FETCH_ASSOC);
     }
