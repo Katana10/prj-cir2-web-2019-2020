@@ -5,9 +5,8 @@
   
   function dbConnect(){
     try{
-      $db = new PDO('mysql:host='.DB_SERVER.';dbname='.DB_NAME.';charset=utf8',
-        DB_USER, DB_PASSWORD);
-      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+      $db = new PDO('mysql:host='.DB_SERVER.';dbname='.DB_NAME.';charset=utf8',DB_USER, DB_PASSWORD);
+      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }catch (PDOException $exception){
       error_log('Connection error: '.$exception->getMessage());
       return false;
@@ -32,7 +31,7 @@
  
   function dbRequestUser($db, $mail){
     try{
-      $request = 'SELECT club FROM club WHERE mail=:mail';
+      $request = 'SELECT * FROM club WHERE mail=:mail';
       $statement = $db->prepare($request);
       $statement->bindParam(':mail', $mail, PDO::PARAM_STR);
       $statement->execute();
@@ -47,7 +46,7 @@
   function dbRequestRace($db){
     try
     {
-      $request = 'SELECT * FROM courses';
+      $request = 'SELECT * FROM course';
       $statement = $db->prepare($request);
       $statement->execute();
       $result = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -60,6 +59,26 @@
     return $result;
   }
   
+  function dbAddRace($db, $libelle, $date, $nb_tour, $distance, $nb_coureur, $longueur_tour, $club){
+    try
+    {
+      $request = 'INSERT INTO course(libelle, date, nb_tour, distance, nb_coureur, longueur_tour, club) VALUES(:libelle, :date, :nb_tour, :distance, :nb_coureur, :longueur_tour, :club)';
+      $statement = $db->prepare($request);
+      $statement->bindParam(':libelle', $libelle, PDO::PARAM_STR);
+      $statement->bindParam(':date', $date, PDO::PARAM_STR);
+      $statement->bindParam(':distance', $distance, PDO::PARAM_INT);
+      $statement->bindParam(':nb_coureur', $nb_coureur, PDO::PARAM_INT);
+      $statement->bindParam(':longueur_tour', $longueur_tour, PDO::PARAM_INT);
+      $statement->bindParam(':club', $club, PDO::PARAM_STR);
+      $statement->execute();
+    }
+    catch (PDOException $exception)
+    {
+      error_log('Request error: '.$exception->getMessage());
+      return false;
+    }
+    return true;
+  }
 
   function dbAddCyclistToRace($db, $mail, $id, $dossart){
     try
@@ -83,7 +102,7 @@
   function dbAddRaceTime($db, $mail, $position, $temps, $points){
     try
     {
-      $request = 'UPDATE participe SET temps=:temps, position=:position, points=:points, temps=:temps  WHERE mail=:coureur';
+      $request = 'UPDATE participe SET temps=:temps, position=:position, points=:points WHERE mail=:coureur';
       $statement = $db->prepare($request);
       $statement->bindParam(':coureur', $mail, PDO::PARAM_STR);
       $statement->bindParam(':position', $position, PDO::PARAM_INT);
@@ -120,17 +139,19 @@
     try
     {
       if ($club == $cluborga){
-        $request ='SELECT cy.nom,cy.prenom, cy.club FROM cycliste cy, club cl, participe p, course co 
+        
+        $request ='SELECT cy.nom,cy.prenom, cy.club, co.libelle, p.temps p.dossart, p.place, p.point FROM cycliste cy, club cl, participe p, course co
         WHERE p.mail = cy.mail AND cy.club =:cluborga AND p.id=:id';
       }else{
-        $request ='SELECT cy.nom,cy.prenom, cy.club, co.libelle FROM cycliste cy, club cl, participe p, course co 
-        WHERE p.mail = cy.mail AND cy.club !=:cluborga AND p.id=:id';
+        $request ='SELECT * FROM cycliste cy, club cl, participe p, course co  WHERE p.mail = cy.mail AND cy.club =:club AND p.id=:id';
+        
       }
       $statement = $db->prepare($request);
       $statement->bindParam(':id', $id, PDO::PARAM_INT);
       $statement->bindParam(':club', $club, PDO::PARAM_STR);
       $statement->bindParam(':cluborga', $cluborga, PDO::PARAM_STR);
       $statement->execute();
+      
       $result = $statement->fetchAll(PDO::FETCH_ASSOC);
     }
     catch (PDOException $exception)
@@ -141,13 +162,15 @@
     return $result;
   }
 
-  function dbRequestCyclists($db, $club){
+  function dbRequestCyclists($db, $mail){
     try
     {
-      $request = 'SELECT * FROM cycliste WHERE club=:club';
+      //$request = 'SELECT * FROM cycliste cy WHERE club=:club';
+      $request="SELECT * FROM cycliste cy, club cl WHERE cl.mail=:mail AND cy.club =cl.club";
       $statement = $db->prepare($request);
-      $statement->bindParam(':club', $club, PDO::PARAM_STR);
+      $statement->bindParam(':mail', $mail, PDO::PARAM_STR);
       $statement->execute();
+      
       $result = $statement->fetchAll(PDO::FETCH_ASSOC);
     }
     catch (PDOException $exception)
@@ -182,22 +205,6 @@
     return true;
   }
 
-  // function dbDeleteComment($db, $userLogin, $id){
-  //   try
-  //   {
-  //     $request = 'DELETE FROM comments WHERE id=:id AND userLogin=:userLogin';
-  //     $statement = $db->prepare($request);
-  //     $statement->bindParam(':id', $id, PDO::PARAM_INT);
-  //     $statement->bindParam(':userLogin', $userLogin, PDO::PARAM_STR, 20);
-  //     $statement->execute();
-  //   }
-  //   catch (PDOException $exception)
-  //   {
-  //     error_log('Request error: '.$exception->getMessage());
-  //     return false;
-  //   }
-  //   return true;
-  // }
 
 
 

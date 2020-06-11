@@ -1,8 +1,8 @@
 <?php
 
   // Database constants.
-  define('DB_USER', 'cyclo');
-  define('DB_PASSWORD', 'velo');
+  define('DB_USER', 'root');
+  define('DB_PASSWORD', '');
   define('DB_NAME', 'projet');
   define('DB_SERVER', 'localhost');
   

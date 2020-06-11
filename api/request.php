@@ -1,6 +1,6 @@
 <?php
 	//require_once("database.php");
-
+	
 	function encodeData($data) {
 		header('Content-Type: application/json');
 		header('Cache-control: no-store, no-cache, must-revalidate');
@@ -88,50 +88,80 @@
 
 
 	require_once('database.php');
-
+	
+	
 	// Connexion à la bdd.
 	$db = dbConnect();
-  if (!$db){
-	  header ('HTTP/1.1 503 Service Unavailable');
-	  exit;
-  }
+	if (!$db){
+		header ('HTTP/1.1 503 Service Unavailable');
+		exit;
+	}
 
-  // verification de la requête.
-  $requestMethod = $_SERVER['REQUEST_METHOD'];
-  $request = substr($_SERVER['PATH_INFO'], 1);
-  $request = explode('/', $request);
-  $requestRessource = array_shift($request);
-  $club ='AC GOUESNOU';
+	// verification de la requête.
+	$requestMethod = $_SERVER['REQUEST_METHOD'];
+	$request = substr($_SERVER['PATH_INFO'], 1);
+	$request = explode('/', $request);
+	$requestRessource = array_shift($request);
+	
 
-  // verification de l'id associé à la requête.
-   $id = array_shift($request);
-  if ($id == ''){
+	// verification de l'id associé à la requête.
+	$id = array_shift($request);
+  	if ($id == ''){
 	  $id = NULL;
 	}
 	$data = false;
 
 	// select request.
 	if ($requestRessource == 'user'){
-		$data = dbRequestUser($db);
-  }
+		$data = dbRequestUser($db, $_GET['mail']);
+		$mail = $_GET['mail'];
+	}
+	
+	if($requestRessource == 'cycliste'){
+		$data = dbRequestCyclists($db, $_GET['mail']);
+		// var_dump($data[0]['club']);
+		if ($requestMethod == 'PUT' && $login != NULL){
+			parse_str(file_get_contents('php://input'), $_PUT);
+			if (isset($_PUT['mail']) && isset($_PUT['nom'])){
+				$data = dbModifyCyclist($db, $_GET['mail'], strip_tags($_PUT['nom']), $prenom, $num_licence, $date_naissance, $club, $code_insee);
+			}
+		}
+	}    
+	
+	if ($requestRessource == 'courses'){
+		$data = dbRequestRace($db);
+		//dbRequestOnList($db, $id, $_GET['mail'], $cluborga)
+		if ($requestMethod == 'POST'){
+			if (isset($_POST['login']) ){
+				// echo$_POST['login'];
+				$data = dbAddRace($db, $_GET['libelle'], $_GET['date'], $_GET['nb_tour'], $_GET['distance'],  $_GET['nb_coureur'], $_GET['longueur_tour'],  $_GET['club']);
+			}
+		}
+	}
 
-  if($requestRessource == 'cycliste'){
-	  $data = dbRequestCyclists($db, $club);
-  }    
+	if($requestRessource == 'participants'){
+		$cluborga='AC GOUESNOU';
+		//$club = 'ABC PLOUESCAT';
+		$data = dbRequestOnList($db, $_GET['id'], $_GET['mail'], $cluborga);
+		
+	}
+
+  	if ($requestMethod == 'OPTIONS'){
+	header('HTTP/1.1 200 OK');
+	exit;
+	}
+
+	
   
-  if ($requestRessource == 'courses'){
-	  $data = dbRequestRace($db);
-  }
-  
-  //encodeData($data);
+	//encodeData($data);
 
 
-  // Send data to the client.
-  header('Content-Type: application/json; charset=utf-8');
-  header('Cache-control: no-store, no-cache, must-revalidate');
-  header('Pragma: no-cache');
-  header('HTTP/1.1 200 OK');
-  echo json_encode($data);
-  exit;
+	// Send data to the client.
+	header('Content-Type: application/json; charset=utf-8');
+	header('Cache-control: no-store, no-cache, must-revalidate');
+	header('Pragma: no-cache');
+	header('HTTP/1.1 200 OK');
+	echo json_encode($data);
+	exit;
 
 ?>
