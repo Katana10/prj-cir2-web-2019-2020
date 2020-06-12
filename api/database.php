@@ -2,7 +2,9 @@
 
   require_once('constants.php');
 
-  
+  //fonction dbConnect 
+  //type de valeur de retour : PDO
+  //retourne un accès à une base de données, si connexion, sinon une erreur
   function dbConnect(){
     try{
       $db = new PDO('mysql:host='.DB_SERVER.';dbname='.DB_NAME.';charset=utf8',DB_USER, DB_PASSWORD);
@@ -15,20 +17,10 @@
     return $db;
   }
 
-  // function dbRequestPhotos($db){
-  //   try{
-  //     $request = 'SELECT id, small AS src FROM photos';
-  //     $statement = $db->prepare($request);
-  //     $statement->execute();
-  //     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-  //   }catch (PDOException $exception){
-  //     error_log('Request error: '.$exception->getMessage());
-  //     return false;
-  //   }
-  //   return $result;
-  // }
 
- 
+  //fonction dbRequestUser 
+  //vérification de l'utilisateur
+  //si l'adresse mail est enregistrée dans la base de données, l'utilisateur a un accès autorisé
   function dbRequestUser($db, $mail){
     try{
       $request = 'SELECT * FROM club WHERE mail=:mail';
@@ -43,6 +35,9 @@
     return $result;
   }
 
+  //fonction dbRequestRace
+  //attribut : $db de type PDO
+  //retourne toutes les données contenues dans course de la BDD
   function dbRequestRace($db){
     try
     {
@@ -59,6 +54,9 @@
     return $result;
   }
   
+
+  //function dbAddRace
+  //Ajoute une nouvelle course à la base de données avec toutes les informations nécessaires
   function dbAddRace($db, $libelle, $dateco, $nb_tour, $distance, $nb_coureur, $longueur_tour, $club){
     try
     {
@@ -83,6 +81,9 @@
     return true;
   }
 
+
+  //fonction dbAddCyclistToRace
+  //Ajoute un cycliste à une course dans la base de données
   function dbAddCyclistToRace($db, $mail, $id, $dossart){
     try
     {
@@ -103,6 +104,9 @@
     return true;
   }
 
+
+  //fonction dbAddRaceTime
+  //Ajoute un temps, une position et des points à un coureur qui participe à une course
   function dbAddRaceTime($db, $mail, $position, $temps, $points){
     try
     {
@@ -122,6 +126,9 @@
     return true;
   }
 
+
+  //dbRequestRanking
+  //retourne le classement de tous les cyclistes
   function dbRequestRanking($db, $id){
     try
     {
@@ -139,6 +146,10 @@
     return $result;
   }
 
+
+  //fonction dbResquestOnList
+  //retourne tous les cyclistes d'un meme club qui participe à une course 
+  //ou affiche tous les cyclistes participants si club organisateur
   function dbRequestOnList($db, $id, $club, $cluborga){
     try
     {
@@ -175,6 +186,8 @@
   }
 
 
+  //fonction dbRequestCyclists
+  //retourne tous les cyclistes d'un club
   function dbRequestCyclists($db, $mail){
     try
     {
@@ -194,6 +207,9 @@
     return $result;
   }
 
+
+  //fonction dbModifyCyclist
+  //modifie les données d'un cycliste
   function dbModifyCyclist($db, $mail, $nom, $prenom, $num_licence, $date_naissance, $club, $code_insee){
     try
     {
