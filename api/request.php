@@ -113,40 +113,36 @@
 
 	// select request.
 	if ($requestRessource == 'user'){
-		$data = dbRequestUser($db, $_GET['mail']);
-		$mail = $_GET['mail'];
+		$data = dbRequestUser($db, $_GET['mailco']);
+		$mail = $_GET['mailco'];
 	}
 	
 	if($requestRessource == 'cycliste'){
-		$data = dbRequestCyclists($db, $_GET['mail']);
-		// var_dump($data[0]['club']);
-		if ($requestMethod == 'PUT' && $login != NULL){
-			parse_str(file_get_contents('php://input'), $_PUT);
-			if (isset($_PUT['mail']) && isset($_PUT['nom'])){
-				$data = dbModifyCyclist($db, $_GET['mail'], strip_tags($_PUT['nom']), $prenom, $num_licence, $date_naissance, $club, $code_insee);
+		if ($requestMethod == 'GET'){
+			if(isset($_GET['mailco']) ){
+				$data = dbRequestCyclists($db, $_GET['mailco']);
 			}
+		
+		}
+		if ($requestMethod == 'PUT'){
+			echo'ouiiii';
+			parse_str(file_get_contents('php://input'), $_PUT);
+			echo $_GET['mail'];
+			$data = dbModifyCyclist($db, $_GET['mail'], strip_tags($_PUT['nom']), $prenom, $num_licence, $date_naissance, $club, $code_insee);
+			
 		}
 	}    
 	
 	if ($requestRessource == 'courses'){
 		if ($requestMethod =='GET'){
 			$data = dbRequestRace($db);
-			//echo $data[0]['club'];
-			//dbRequestOnList($db, $id, $_GET['mail'], $cluborga)
+
 		}
 		
 		if ($requestMethod == 'POST'){
-			//echo "oui";
-			//if (isset($_POST['login']) ){
-				// echo$_POST['login'];
-				//echo "oui";
-				// echo $_POST['libelle'];
-				// echo $_POST['date'];
-				// echo $_POST['nb_'];
-				// echo $_POST['libelle'];
-				// echo $_POST['libelle'];
+			
 				$data = dbAddRace($db, $_POST['libelle'], $_POST['date'], $_POST['nb_tour'], $_POST['distance'],  $_POST['nb_coureur'], $_POST['longueur_tour'],  $_POST['club']);
-			//}
+
 		}
 	}
 
@@ -161,11 +157,8 @@
 			
 		}
 		if ($requestMethod == 'POST'){
-				// echo$_POST['mail'];
-				// echo'oui';
 
-				$data = dbAddCyclistToRace($db, $_POST['mail'], $_POST['id'], $_POST['dossart']);
-			// }
+			$data = dbAddCyclistToRace($db, $_POST['mail'], $_POST['id'], $_POST['dossart']);
 		}
 		
 		
