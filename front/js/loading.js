@@ -56,22 +56,16 @@ $('#cyclist-card').off('click').on('click', '.mod', () =>{
 	}, 'modificate=' + prompt('Modification du champ :'));
 });
 
-//Attente de l'évènement pour cliquer sur une image
-$('#cyclistes').on('click', 'img', function() {
+//Attente de l'évènement pour cliquer sur un cycliste
+$('#cyclistes').on('click', 'div', function() {
     var id = $(event.target).attr('value');
     console.log(id);
     
     ajaxRequest('GET','http://prj-cir2-web-api.monposte/request.php/cyclistes/'+id, loadCyclist);
    
-});*/
-
-ajaxRequest('GET', 'http://prj-cir2-web-api.monposte/request.php/cycliste/', loadCyclists);
-
-//Attente de l'évènement pour modifier un commentaire
-$('#comment-list').on('click', '.mod', () => {
-	ajaxRequest('PUT', 'php/request.php/comments/' + 
-		$(event.target).closest('.mod').attr('value'), () => {
-			ajaxRequest('GET', 'php/request.php/comments/?id='+$('#photo').attr('photoid'), loadComments);
-		}, 'comment=' + prompt('Nouveau commentaire: '));
 });
+
+ajaxRequest('GET', 'http://prj-cir2-web-api.monposte/request.php/cyclistes/', loadCyclists);
+
+
 
