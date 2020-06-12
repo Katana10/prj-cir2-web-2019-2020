@@ -59,17 +59,20 @@
     return $result;
   }
   
-  function dbAddRace($db, $libelle, $date, $nb_tour, $distance, $nb_coureur, $longueur_tour, $club){
+  function dbAddRace($db, $libelle, $dateco, $nb_tour, $distance, $nb_coureur, $longueur_tour, $club){
     try
     {
-      $request = 'INSERT INTO course(libelle, date, nb_tour, distance, nb_coureur, longueur_tour, club) VALUES(:libelle, :date, :nb_tour, :distance, :nb_coureur, :longueur_tour, :club)';
+      $request = 'INSERT INTO course(libelle, date, nb_tour, distance, nb_coureur, longueur_tour, club) VALUES(:libelle, :dateco, :nb_tour, :distance, :nb_coureur, :longueur_tour, :club)';
       $statement = $db->prepare($request);
+      // echo"non";
       $statement->bindParam(':libelle', $libelle, PDO::PARAM_STR);
-      $statement->bindParam(':date', $date, PDO::PARAM_STR);
+      $statement->bindParam(':dateco', $dateco, PDO::PARAM_STR);
+      $statement->bindParam(':nb_tour', $nb_tour, PDO::PARAM_INT);
       $statement->bindParam(':distance', $distance, PDO::PARAM_INT);
       $statement->bindParam(':nb_coureur', $nb_coureur, PDO::PARAM_INT);
       $statement->bindParam(':longueur_tour', $longueur_tour, PDO::PARAM_INT);
       $statement->bindParam(':club', $club, PDO::PARAM_STR);
+      // echo"oui";
       $statement->execute();
     }
     catch (PDOException $exception)
@@ -85,6 +88,7 @@
     {
       $request = 'INSERT INTO participe(mail, id, dossart)
         VALUES(:coureur, :id, :dossart)';
+      // echo 'oui';
       $statement = $db->prepare($request);
       $statement->bindParam(':coureur', $mail, PDO::PARAM_STR);
       $statement->bindParam(':id', $id, PDO::PARAM_INT);
@@ -139,17 +143,25 @@
     try
     {
       if ($club == $cluborga){
-        
-        $request ='SELECT cy.nom,cy.prenom, cy.club, co.libelle, p.temps p.dossart, p.place, p.point FROM cycliste cy, club cl, participe p, course co
-        WHERE p.mail = cy.mail AND cy.club =:cluborga AND p.id=:id';
+        $request ='SELECT p.temps, p.point, p.id, cy.nom, cy.prenom
+                   FROM participe p
+                   JOIN cycliste cy ON cy.mail = p.mail
+                   WHERE id=:id';
+           $statement = $db->prepare($request);
+          $statement->bindParam(':id', $id, PDO::PARAM_INT);
+
       }else{
-        $request ='SELECT * FROM cycliste cy, club cl, participe p, course co  WHERE p.mail = cy.mail AND cy.club =:club AND p.id=:id';
-        
+        $request ='SELECT p.temps, p.point, p.id, cy.nom, cy.prenom 
+        FROM participe p
+        JOIN cycliste cy ON cy.mail = p.mail  
+        JOIN club cl ON cl.club = cy.club 
+        WHERE cl.club =:club AND p.id =:id';
+        $statement = $db->prepare($request);
+          $statement->bindParam(':club', $club, PDO::PARAM_STR);
+          $statement->bindParam(':id', $id, PDO::PARAM_INT);
       }
-      $statement = $db->prepare($request);
-      $statement->bindParam(':id', $id, PDO::PARAM_INT);
-      $statement->bindParam(':club', $club, PDO::PARAM_STR);
-      $statement->bindParam(':cluborga', $cluborga, PDO::PARAM_STR);
+      
+      //$statement->bindParam(':club', $club, PDO::PARAM_STR);
       $statement->execute();
       
       $result = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -161,6 +173,7 @@
     }
     return $result;
   }
+
 
   function dbRequestCyclists($db, $mail){
     try

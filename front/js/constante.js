@@ -1,0 +1,1 @@
+var chemin = 'http://prj-cir2-web-api.monposte';

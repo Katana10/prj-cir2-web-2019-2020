@@ -129,20 +129,45 @@
 	}    
 	
 	if ($requestRessource == 'courses'){
-		$data = dbRequestRace($db);
-		//dbRequestOnList($db, $id, $_GET['mail'], $cluborga)
+		if ($requestMethod =='GET'){
+			$data = dbRequestRace($db);
+			//echo $data[0]['club'];
+			//dbRequestOnList($db, $id, $_GET['mail'], $cluborga)
+		}
+		
 		if ($requestMethod == 'POST'){
-			if (isset($_POST['login']) ){
+			//echo "oui";
+			//if (isset($_POST['login']) ){
 				// echo$_POST['login'];
-				$data = dbAddRace($db, $_GET['libelle'], $_GET['date'], $_GET['nb_tour'], $_GET['distance'],  $_GET['nb_coureur'], $_GET['longueur_tour'],  $_GET['club']);
-			}
+				//echo "oui";
+				// echo $_POST['libelle'];
+				// echo $_POST['date'];
+				// echo $_POST['nb_'];
+				// echo $_POST['libelle'];
+				// echo $_POST['libelle'];
+				$data = dbAddRace($db, $_POST['libelle'], $_POST['date'], $_POST['nb_tour'], $_POST['distance'],  $_POST['nb_coureur'], $_POST['longueur_tour'],  $_POST['club']);
+			//}
 		}
 	}
 
 	if($requestRessource == 'participants'){
-		$cluborga='AC GOUESNOU';
-		//$club = 'ABC PLOUESCAT';
-		$data = dbRequestOnList($db, $_GET['id'], $_GET['mail'], $cluborga);
+		if ($requestMethod == 'GET'){
+			if(isset($_GET['id']) && isset($_GET['club'])){
+				$cluborga = dbRequestRace($db);
+				$cluborga = $cluborga[$_GET['id']-1]['club'];
+				$data = dbRequestOnList($db, $_GET['id'], $_GET['club'], $cluborga);
+			}
+			
+			
+		}
+		if ($requestMethod == 'POST'){
+				// echo$_POST['mail'];
+				// echo'oui';
+
+				$data = dbAddCyclistToRace($db, $_POST['mail'], $_POST['id'], $_POST['dossart']);
+			// }
+		}
+		
 		
 	}
 
