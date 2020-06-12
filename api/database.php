@@ -107,15 +107,17 @@
 
   //fonction dbAddRaceTime
   //Ajoute un temps, une position et des points à un coureur qui participe à une course
-  function dbAddRaceTime($db, $mail, $position, $temps, $points){
+  function dbAddRaceTime($db, $id, $mail, $position, $temps, $points){
     try
     {
-      $request = 'UPDATE participe SET temps=:temps, position=:position, points=:points WHERE mail=:coureur';
+      $request = 'UPDATE participe SET temps=:temps, position=:position, points=:points WHERE mail=:coureur AND id=:id';
       $statement = $db->prepare($request);
-      $statement->bindParam(':coureur', $mail, PDO::PARAM_STR);
+      $statement->bindParam(':temps', $temps, PDO::PARAM_STR);
       $statement->bindParam(':position', $position, PDO::PARAM_INT);
       $statement->bindParam(':points', $points, PDO::PARAM_INT);
-      $statement->bindParam(':temps', $temps, PDO::PARAM_STR);
+      $statement->bindParam(':coureur', $mail, PDO::PARAM_STR);
+      $statement->bindParam(':id', $id, PDO::PARAM_INT);
+
       $statement->execute();
     }
     catch (PDOException $exception)
