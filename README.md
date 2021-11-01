@@ -1,36 +1,43 @@
-## prj-cir2-web-2019-2020
+### prj-cir2-web-2019-2020
 
-Site permettant de classer les coureurs cyclistes, inscrits dans les différents clubs de la région, sur chacune des courses de l'année, et de pouvoir sortir le classement général ainsi que quelques statistiques en fin de saison.
+This site allows you to classify the cyclists, registered in the different clubs of the region, on each race of the year.
+The aim is to be able to produce the general classification, as well as some statistics at the end of the season.
 
-# Dépendances
+## Dependencies
 
-Vous devez posséder sur votre machine :
+You must have on your machine :
 
-PHP version 7 ou supérieur
-Un serveur Web (Apache)
-MySQL 
-Le projet à été essayé sous XAMP et sous WINDOWS.
+- PHP version 7 or higher
+- A Web server (Apache)
+- MySQL 
+The project has been tested under XAMP, under WINDOWS environment.
 
-# Installation
-Télécharger le fichier zip à partir de l'ENT, puis enregistrer le projet sous Xamp/htdocs.
+## Installation
 
-# Mise en place du site
-Le site possède sa propre base de donnée que vous devez charger afin de le rendre fonctionnel. Pour ce faire, rendez-vous sur phpmyadmin et suivez les étapes suivantes :
+Download the zip file from my Github, then save the project as Xamp/htdocs.
 
-1. Cliquer sur la rubrique import à la base de votre serveur.
-2. Télécharger le fichier table.sql se trouvant là où vous avez enregistré le projet dans le dossier BDD.
-3. N'oubliez pas de sélectionner les options **_Jeu de caractères du fichier_ :** utf-8 et **_FORMAT_** SQL
-4. Cliquer sur exécuter.
+## Setting Up
 
-Tout est inclus dans le fichier table.sql, mais si vous voulez changer les logins de connexion, vous pouvez changer les constantes dans le fichier api/constants.php. À condition de ne pas oublier de les changer dans phpmyadmin.
-De même pour votre domaine de virtual host dans front/constante.js .
+# On XAMP dependancies
+The site has its own database that you must load in order to make it functional. To do this, go to phpmyadmin and follow the steps below:
 
-# Utilisation
+1. Click on the import to your server's database section.
+2. Download the table.sql file from where you saved the project in the DB folder.
+3. Don't forget to select the options **_Character set of the file_:** utf-8 and **_FORMAT_** SQL
+4. Click on execute.
 
-Pour affiché les données des cyclistes d'un club il suffit de se connecter sur le site et de rentrer le mail d'un des users nous vous conseillons d'avoir un bloc-note pour les mettres.
+Everything is included in the table.sql file, but if you want to change the connection logins, you can change the constants in the `api/constants.php` file. As long as you don't forget to change them in phpmyadmin.
+The same goes for your virtual host domain in `front/constants.js` .
 
-Pour voir les participants d'une course ou voir les données d'une course cliqué en haut à gauche sur le bouton courses.
-Vous pourrez voir les courses, les participants, et en rajouter dans les deux cas.
+# On Linux Commands
 
-Le site n'est pas encore finiset certaines fonctionnalités ne fonctionnes pas parfaitement.
+## Use
+
+To view the data of the cyclists of a club you just have to connect to the site and enter the email of one of the users. 
+> We advise you to have a notepad to put them.
+
+To see the participants of a race or to see the data of a race click on the races button on the top left.
+You will be able to see the races, the participants, and add in both cases.
+
+The site is not yet finished and some features are not working perfectly.
 Enjoy.
